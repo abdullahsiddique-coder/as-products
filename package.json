@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "description": "AS-PRODUCTS Premium Luxury Experience",
-  "main": "index.js",
   "dependencies": {
     "@supabase/ssr": "^0.0.10",
     "@supabase/supabase-js": "^2.39.0",
