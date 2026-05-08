@@ -1,0 +1,120 @@
+{
+  "site": {
+    "brandName": "AS-PRODUCTS",
+    "heroTitle": "AS-PRODUCTS",
+    "heroSub": "Official Premium Collection",
+    "footerDesc": "AS-PRODUCTS is a premier destination for luxury essentials, managed by Abdullah Siddique. We are committed to uncompromising authenticity, precision craftsmanship, and delivering excellence to our customers across Pakistan.",
+    "footerLinks": [
+      { "label": "Home Page", "url": "#" },
+      { "label": "Customer Support", "url": "#" },
+      { "label": "Privacy Policy", "url": "#" },
+      { "label": "User Agreement", "url": "#" }
+    ]
+  },
+  "saleBanner": {
+    "enabled": true,
+    "text": "FREE DELIVERY ALL OVER PAKISTAN - LIMITED TIME OFFER"
+  },
+  "chatbot": {
+    "welcome": "Assalam-o-Alaikum! Main AS-PRODUCTS ka consultant hoon. Main aapki kya madad kar sakta hoon?",
+    "options": [
+      {
+        "id": "order",
+        "question": "Order kaise karein?",
+        "answer": "Order karne ke liye 'Order Now' button dabayein, apni maloomat (Name, Address, Number) likhein aur 'Place Order' par click karein. Phir WhatsApp par message send kar dein. Bas!"
+      },
+      {
+        "id": "delivery",
+        "question": "Delivery kab milegi?",
+        "answer": "Delivery pooray Pakistan mein 2 se 4 din mein mil jaye gi. InshaAllah humari team jald az jald aap tak parcel puhanchane ki koshish kare gi."
+      },
+      {
+        "id": "check",
+        "question": "Kya pehle check kar sakte hain?",
+        "answer": "Jee bilkul! AS-PRODUCTS aapko 'Open Parcel' ki saholat deta hai. Aap parcel khol kar check kar sakte hain aur tassali karne ke baad payment karein."
+      },
+      {
+        "id": "quality",
+        "question": "Quality ki kya guarantee hai?",
+        "answer": "Hum sirf premium aur 100% original quality deliver karte hain. Quality par koi compromise nahi hota, isi liye humara kafi repeat customer base hai."
+      },
+      {
+        "id": "contact",
+        "question": "Contact kesy krein?",
+        "answer": "Aap hum se kisi bhi waqt WhatsApp par rabta kar sakte hain (0300 2749065). Humari koshish hoti hai ke aapko jald az jald reply diya jaye."
+      }
+    ]
+  },
+  "products": [
+    {
+      "id": 1,
+      "name": "Professional Button Installer",
+      "badge": "New Arrival",
+      "originalPrice": 1500,
+      "price": 1250,
+      "images": [
+        "assets/button_installer/IMG-20260505-WA0033.jpg",
+        "assets/button_installer/IMG-20260404-WA0122.jpg",
+        "assets/button_installer/IMG-20260503-WA0033.jpg",
+        "assets/button_installer/IMG-20260505-WA0023.jpg"
+      ],
+      "videos": [
+        "assets/button_installer/VID-20260505-WA0054.mp4",
+        "assets/button_installer/WhatsApp_Video_2026-05-05_at_9.24.00_PM.mp4"
+      ],
+      "stock": 100
+    },
+    {
+      "id": 2,
+      "name": "Magic Cleaning Duster",
+      "badge": "Home Essential",
+      "originalPrice": 1350,
+      "price": 1050,
+      "images": [
+        "Duster for Cleaning/IMG-20260505-WA0032.jpg",
+        "Duster for Cleaning/IMG-20260505-WA0024.jpg",
+        "Duster for Cleaning/IMG-20260505-WA0025.jpg",
+        "Duster for Cleaning/IMG-20260505-WA0031.jpg"
+      ],
+      "videos": [
+        "Duster for Cleaning/VID-20260429-WA0039.mp4",
+        "Duster for Cleaning/WhatsApp Video 2026-04-30 at 12.31.17 PM.mp4"
+      ],
+      "stock": 100
+    },
+    {
+      "id": 3,
+      "name": "Automatic Mouse Trap",
+      "badge": "Smart Solution",
+      "originalPrice": 1150,
+      "price": 950,
+      "images": [
+        "assets/mouse_trap/1777996294896.jpg"
+      ],
+      "videos": [
+        "assets/mouse_trap/VID-20260503-WA0036.mp4",
+        "assets/mouse_trap/VID-20260505-WA0050.mp4",
+        "assets/mouse_trap/VID-20260505-WA0053.mp4"
+      ],
+      "stock": 100
+    },
+    {
+      "id": 4,
+      "name": "High-Pressure Water Nozzle",
+      "badge": "Utility Pro",
+      "originalPrice": 1400,
+      "price": 1150,
+      "images": [
+        "Water Nozzle/IMG-20260404-WA0103.jpg"
+      ],
+      "videos": [
+        "Water Nozzle/VID-20260429-WA0038.mp4",
+        "Water Nozzle/VID-20260429-WA0040.mp4",
+        "Water Nozzle/VID-20260505-WA0047.mp4",
+        "Water Nozzle/VID-20260505-WA0055.mp4",
+        "Water Nozzle/VID-20260505-WA0057.mp4"
+      ],
+      "stock": 100
+    }
+  ]
+}

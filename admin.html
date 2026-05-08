@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AS Admin | Visual Editor</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS REPLICATED FROM INDEX.HTML FOR PERFECT MATCH */
+        :root {
+            --primary: #0a192f;
+            --accent: #d4af37;
+            --white: #ffffff;
+            --bg-light: #f8f9fa;
+            --text-dark: #1a1a1a;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-light); margin: 0; color: var(--text-dark); overflow-x: hidden; line-height: 1.6; padding-top: 60px; }
+
+        .btn { border: none; cursor: pointer; border-radius: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- ADMIN OVERLAYS --- */
+        .admin-edit-overlay { 
+            position: absolute; inset: 0; background: rgba(0,0,0,0.4); 
+            display: flex; align-items: center; justify-content: center; 
+            opacity: 0; cursor: pointer; z-index: 100; border-radius: inherit;
+        }
+        .admin-edit-overlay:hover { opacity: 1; }
+        .edit-tag { background: var(--accent); color: var(--primary); padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; }
+        
+        .section-wrapper { position: relative; }
+
+        /* --- NAV --- */
+        .top-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 10px 5%; background: var(--primary); border-bottom: 2px solid var(--accent); }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--white); text-decoration: none; }
+        .logo span { color: var(--accent); }
+        
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .publish-btn { background: var(--accent); color: var(--primary); padding: 8px 20px; border-radius: 20px; font-weight: 800; font-size: 0.8rem; }
+        .role-badge { background: rgba(255,255,255,0.1); color: var(--white); padding: 5px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+
+        /* --- HERO --- */
+        .hero { 
+            height: 50vh; 
+            background: linear-gradient(rgba(10, 25, 47, 0.8), rgba(10, 25, 47, 0.8)), url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=1500'); 
+            background-size: cover; background-position: center; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            color: var(--white); text-align: center; padding: 0 20px;
+        }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 4rem); margin: 0; letter-spacing: 5px; }
+        .hero p { font-size: 1rem; opacity: 0.9; margin-top: 10px; }
+
+        /* --- PRODUCTS --- */
+        .container { max-width: 1400px; margin: auto; padding: 40px 5%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .product-card { background: var(--white); border-radius: 24px; box-shadow: var(--shadow); position: relative; padding-bottom: 60px; overflow: hidden; border: 1px solid #eee; }
+        .product-card.hidden { opacity: 0.6; filter: grayscale(1); }
+        .hidden-tag { position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; padding: 2px 10px; border-radius: 5px; font-size: 0.6rem; z-index: 20; }
+
+        .media-box { height: 250px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; }
+        .media-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        
+        .product-info { padding: 20px; text-align: center; }
+        .product-info h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin: 0; }
+        .price { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin: 10px 0; }
+
+        .card-actions { position: absolute; bottom: 0; left: 0; right: 0; display: flex; border-top: 1px solid #eee; }
+        .card-actions button { flex: 1; padding: 15px; background: none; border: none; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+        .btn-edit { color: var(--primary); border-right: 1px solid #eee; }
+        .btn-delete { color: #ff4444; }
+
+        /* --- FLOATING CONTROLS --- */
+        #chat-config-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 1000; border: 2px solid var(--accent); }
+        #acc-config-btn { position: fixed; bottom: 100px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 1000; border: 2px solid var(--accent); }
+
+        /* --- MODALS --- */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10001; backdrop-filter: blur(8px); padding: 20px; overflow-y: auto; }
+        .modal-content { background: var(--white); max-width: 600px; margin: 40px auto; border-radius: 30px; padding: 35px; position: relative; border: 2px solid var(--accent); }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-family: inherit; }
+        .form-group input:focus { border-color: var(--accent); outline: none; }
+        
+        .btn-save { width: 100%; padding: 15px; background: var(--primary); color: var(--white); font-weight: 700; border-radius: 12px; margin-top: 10px; }
+        
+        .user-row { background: #f8f9fa; padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .user-info span { display: block; font-size: 0.8rem; color: #666; }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <a href="/" class="logo">AS-<span>ADMIN</span></a>
+    <div class="nav-actions">
+        <span class="role-badge" id="role-display">Role</span>
+        <button class="publish-btn" onclick="saveAll()">PUBLISH CHANGES</button>
+        <button onclick="logout()" style="background:none; border:none; color:#888; cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+</nav>
+
+<div class="section-wrapper">
+    <div class="admin-edit-overlay" onclick="openModal('siteModal')"><div class="edit-tag">Edit Site Info</div></div>
+    <header class="hero" id="v-hero">
+        <h1 id="v-title">AS-PRODUCTS</h1>
+        <p id="v-sub">Official Premium Collection</p>
+    </header>
+</div>
+
+<div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <h2 style="margin:0; font-family:'Playfair Display';">Manage Product Slots</h2>
+        <button class="publish-btn" style="background:var(--primary); color:var(--white);" onclick="editProduct(null)">+ ADD NEW SLOT</button>
+    </div>
+    <div class="grid" id="admin-grid"></div>
+</div>
+
+<div id="chat-config-btn" title="Chatbot Settings" onclick="openModal('chatModal')"><i class="fas fa-robot"></i></div>
+<div id="acc-config-btn" title="Account Settings" onclick="openAccSettings()"><i class="fas fa-user-cog"></i></div>
+
+<!-- SITE MODAL -->
+<div id="siteModal" class="modal">
+    <div class="modal-content">
+        <div class="close-btn" onclick="closeModal('siteModal')">&times;</div>
+        <h3>Site Identity & Branding</h3>
+        <div class="form-group"><label>Brand Name (e.g. AS-PRODUCTS)</label><input type="text" id="i-brand"></div>
+        <div class="form-group"><label>Hero Title</label><input type="text" id="i-hero-title"></div>
+        <div class="form-group"><label>Hero Subtitle</label><input type="text" id="i-hero-sub"></div>
+        <div class="form-group"><label>Hero Background URL</label><input type="text" id="i-hero-bg"></div>
+        <div class="form-group"><label>Sale Bar Text</label><input type="text" id="i-sale-text"></div>
+        <div class="form-group"><label>Enable Sale Bar</label><input type="checkbox" id="i-sale-en" style="width:auto;"></div>
+        <div class="form-group"><label>Footer Description</label><textarea id="i-foot-desc" rows="2"></textarea></div>
+        
+        <p style="font-weight:700; font-size:0.7rem; color:var(--accent); margin-top:20px;">FOOTER CONTACT INFO</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="form-group"><label>Phone</label><input type="text" id="i-f-phone"></div>
+            <div class="form-group"><label>Email</label><input type="text" id="i-f-email"></div>
+            <div class="form-group"><label>Address</label><input type="text" id="i-f-addr"></div>
+            <div class="form-group"><label>WhatsApp Num</label><input type="text" id="i-f-wa"></div>
+            <div class="form-group"><label>Insta Username</label><input type="text" id="i-f-ig"></div>
+        </div>
+
+        <p style="font-weight:700; font-size:0.7rem; color:var(--accent); margin-top:20px;">FOOTER LINKS</p>
+        <div id="i-f-links-container"></div>
+        <button class="btn-save" style="background:#eee; color:#333; margin-top:10px;" onclick="addFooterLinkLocal()">+ Add Footer Link</button>
+
+        <button class="btn-save" onclick="updateSiteLocal()">Apply Changes</button>
+    </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <div class="close-btn" onclick="closeModal('productModal')">&times;</div>
+        <h3 id="p-modal-title">Edit Product Slot</h3>
+        <input type="hidden" id="p-id">
+        <div class="form-group"><label>Product Name</label><input type="text" id="p-name"></div>
+        <div class="form-group"><label>Price (PKR)</label><input type="number" id="p-price"></div>
+        <div class="form-group"><label>Badge (e.g. New Arrival)</label><input type="text" id="p-badge"></div>
+        <div class="form-group"><label>Images (One URL per line)</label><textarea id="p-imgs" rows="3"></textarea></div>
+        <div class="form-group"><label>Video URL (Optional)</label><input type="text" id="p-video"></div>
+        <div class="form-group">
+            <label>Upload Media (Image or Video)</label>
+            <input type="file" id="f-upload" onchange="handleUpload(this)" style="font-size:0.8rem;">
+            <p id="u-status" style="font-size:0.7rem; color:var(--accent); margin-top:5px;"></p>
+        </div>
+        <div class="form-group"><label>Hide from Frontend</label><input type="checkbox" id="p-hidden" style="width:auto;"></div>
+        <button class="btn-save" onclick="saveProductLocal()">Save Product</button>
+    </div>
+</div>
+
+<!-- CHAT MODAL -->
+<div id="chatModal" class="modal">
+    <div class="modal-content">
+        <div class="close-btn" onclick="closeModal('chatModal')">&times;</div>
+        <h3>AI Chatbot Configuration</h3>
+        <div class="form-group"><label>Welcome Message</label><textarea id="c-welcome" rows="2"></textarea></div>
+        <p style="font-size:0.7rem; font-weight:700; color:#888;">DYNAMIC Q&A OPTIONS</p>
+        <div id="c-list" style="max-height:300px; overflow-y:auto; margin-bottom:15px;"></div>
+        <button class="btn-save" style="background:#eee; color:#333;" onclick="addChatLocal()">+ Add New Option</button>
+        <button class="btn-save" onclick="updateChatLocal()">Save Chatbot</button>
+    </div>
+</div>
+
+<!-- ACCOUNT SETTINGS MODAL -->
+<div id="accModal" class="modal">
+    <div class="modal-content">
+        <div class="close-btn" onclick="closeModal('accModal')">&times;</div>
+        <h3>Account & Access Management</h3>
+        
+        <div style="margin-bottom:30px; padding-bottom:20px; border-bottom:1px solid #eee;">
+            <p style="font-weight:700; font-size:0.8rem; color:var(--accent);">MY ACCOUNT</p>
+            <div class="form-group"><label>Change Password</label><input type="password" id="my-pass" placeholder="Enter new password"></div>
+            <button class="btn-save" style="width:auto; padding:10px 30px;" onclick="updateMyPass()">Update Password</button>
+        </div>
+
+        <div id="admin-only-section" style="display:none;">
+            <p style="font-weight:700; font-size:0.8rem; color:var(--accent);">MANAGE SUB-ADMINS</p>
+            <div id="user-list"></div>
+            
+            <p style="font-weight:700; font-size:0.7rem; color:#888; margin-top:20px;">CREATE NEW SUB-ADMIN</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:10px;">
+                <input type="text" id="new-sub-user" placeholder="Username" style="padding:10px; border:1px solid #eee; border-radius:10px;">
+                <input type="text" id="new-sub-pass" placeholder="Password" style="padding:10px; border:1px solid #eee; border-radius:10px;">
+                <button class="publish-btn" onclick="createSubAdmin()">ADD</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let siteData = {};
+    const token = localStorage.getItem('admin_token');
+    const role = localStorage.getItem('admin_role');
+    const user = localStorage.getItem('admin_user');
+
+    if(!token) window.location.href = 'index.html';
+
+    async function load() {
+        document.getElementById('role-display').innerText = (role || 'User').toUpperCase();
+        if(role === 'admin') document.getElementById('admin-only-section').style.display = 'block';
+
+        const res = await fetch('/api/products');
+        siteData = await res.json();
+        render();
+    }
+
+    function render() {
+        if(!siteData.site) return;
+        
+        // Visual Preview Updates
+        document.getElementById('v-title').innerText = siteData.site.heroTitle || siteData.site.brandName;
+        document.getElementById('v-sub').innerText = siteData.site.heroSub;
+        if(siteData.site.heroBg) {
+            document.getElementById('v-hero').style.backgroundImage = `linear-gradient(rgba(10, 25, 47, 0.8), rgba(10, 25, 47, 0.8)), url('${siteData.site.heroBg}')`;
+        }
+        
+        // Admin Grid
+        const grid = document.getElementById('admin-grid');
+        grid.innerHTML = (siteData.products || []).map(p => `
+            <div class="product-card ${p.isHidden ? 'hidden' : ''}">
+                ${p.isHidden ? '<div class="hidden-tag">HIDDEN</div>' : ''}
+                <div class="media-box">
+                    ${p.images && p.images[0] ? `<img src="${p.images[0]}">` : '<i class="fas fa-image" style="font-size:3rem; color:#ccc;"></i>'}
+                </div>
+                <div class="product-info">
+                    <h3>${p.name}</h3>
+                    <div class="price">Rs. ${p.price.toLocaleString()}</div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-edit" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i> EDIT</button>
+                    <button class="btn-delete" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i> DELETE</button>
+                </div>
+            </div>
+        `).join('');
+
+        // Fill Form Fields
+        document.getElementById('i-brand').value = siteData.site.brandName;
+        document.getElementById('i-hero-title').value = siteData.site.heroTitle;
+        document.getElementById('i-hero-sub').value = siteData.site.heroSub;
+        document.getElementById('i-hero-bg').value = siteData.site.heroBg || '';
+        document.getElementById('i-sale-text').value = siteData.saleBanner.text;
+        document.getElementById('i-sale-en').checked = siteData.saleBanner.enabled;
+        document.getElementById('i-foot-desc').value = siteData.site.footerDesc;
+
+        // Footer Contact
+        const contact = siteData.footerContact || { phone: "", email: "", address: "", whatsapp: "", instagram: "" };
+        document.getElementById('i-f-phone').value = contact.phone;
+        document.getElementById('i-f-email').value = contact.email;
+        document.getElementById('i-f-addr').value = contact.address;
+        document.getElementById('i-f-wa').value = contact.whatsapp;
+        document.getElementById('i-f-ig').value = contact.instagram;
+
+        // Footer Links
+        renderFooterLinks();
+        
+        document.getElementById('c-welcome').value = siteData.chatbot.welcome;
+        renderChatOptions();
+    }
+
+    function renderFooterLinks() {
+        const container = document.getElementById('i-f-links-container');
+        if(!siteData.footerLinks) siteData.footerLinks = [];
+        container.innerHTML = siteData.footerLinks.map((l, i) => `
+            <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:5px; margin-bottom:5px;">
+                <input type="text" placeholder="Label" value="${l.label}" onchange="siteData.footerLinks[${i}].label=this.value">
+                <input type="text" placeholder="URL" value="${l.url}" onchange="siteData.footerLinks[${i}].url=this.value">
+                <button onclick="removeFooterLinkLocal(${i})" style="color:red; background:none; border:none;">&times;</button>
+            </div>
+        `).join('');
+    }
+
+    function addFooterLinkLocal() {
+        siteData.footerLinks.push({ label: 'New Link', url: '#' });
+        renderFooterLinks();
+    }
+    function removeFooterLinkLocal(i) {
+        siteData.footerLinks.splice(i, 1);
+        renderFooterLinks();
+    }
+
+    // SITE LOGIC
+    function updateSiteLocal() {
+        siteData.site.brandName = document.getElementById('i-brand').value;
+        siteData.site.heroTitle = document.getElementById('i-hero-title').value;
+        siteData.site.heroSub = document.getElementById('i-hero-sub').value;
+        siteData.site.heroBg = document.getElementById('i-hero-bg').value;
+        siteData.saleBanner.text = document.getElementById('i-sale-text').value;
+        siteData.saleBanner.enabled = document.getElementById('i-sale-en').checked;
+        siteData.site.footerDesc = document.getElementById('i-foot-desc').value;
+
+        siteData.footerContact = {
+            phone: document.getElementById('i-f-phone').value,
+            email: document.getElementById('i-f-email').value,
+            address: document.getElementById('i-f-addr').value,
+            whatsapp: document.getElementById('i-f-wa').value,
+            instagram: document.getElementById('i-f-ig').value
+        };
+
+        render();
+        closeModal('siteModal');
+    }
+
+    // CHATBOT LOGIC
+    function addChatLocal() {
+        if(!siteData.chatbot.options) siteData.chatbot.options = [];
+        siteData.chatbot.options.push({ question: 'New Question', answer: 'Your response here' });
+        renderChatOptions();
+    }
+    function removeChatLocal(i) { siteData.chatbot.options.splice(i, 1); renderChatOptions(); }
+    function updateChatLocal() { 
+        siteData.chatbot.welcome = document.getElementById('c-welcome').value;
+        closeModal('chatModal'); 
+    }
+
+    // MEDIA UPLOAD
+    async function handleUpload(input) {
+        const file = input.files[0];
+        if(!file) return;
+        document.getElementById('u-status').innerText = "Uploading...";
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async () => {
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: JSON.stringify({
+                    fileName: Date.now() + '_' + file.name,
+                    fileType: file.type,
+                    fileData: reader.result.split(',')[1]
+                })
+            });
+            const data = await res.json();
+            if(data.url) {
+                if(file.type.includes('video')) {
+                    document.getElementById('p-video').value = data.url;
+                } else {
+                    document.getElementById('p-imgs').value += (document.getElementById('p-imgs').value ? '\n' : '') + data.url;
+                }
+                document.getElementById('u-status').innerText = "Upload successful!";
+            } else {
+                document.getElementById('u-status').innerText = "Upload failed.";
+            }
+        };
+    }
+
+    // ACCOUNT & USERS
+    async function openAccSettings() {
+        openModal('accModal');
+        if(role === 'admin') {
+            const res = await fetch('/api/users', { headers: { 'Authorization': 'Bearer ' + token } });
+            const users = await res.json();
+            const list = document.getElementById('user-list');
+            list.innerHTML = users.map(u => `
+                <div class="user-row">
+                    <div class="user-info">
+                        <strong>${u.username}</strong>
+                        <span>Role: ${u.role} | Pass: ${u.password}</span>
+                    </div>
+                    ${u.username !== 'Abdullah' ? `<button onclick="deleteUser('${u.id}')" style="color:red; background:none; border:none;"><i class="fas fa-user-minus"></i></button>` : ''}
+                </div>
+            `).join('');
+        }
+    }
+
+    async function updateMyPass() {
+        const newPass = document.getElementById('my-pass').value;
+        if(!newPass) return alert("Enter password");
+        const res = await fetch('/api/users', {
+            method: 'PUT',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ username: user, password: newPass })
+        });
+        if(res.ok) alert("Password updated!");
+    }
+
+    async function createSubAdmin() {
+        const u = document.getElementById('new-sub-user').value;
+        const p = document.getElementById('new-sub-pass').value;
+        if(!u || !p) return alert("Fill all fields");
+        const res = await fetch('/api/users', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ username: u, password: p, role: 'subadmin' })
+        });
+        if(res.ok) { alert("Sub-admin created!"); openAccSettings(); }
+    }
+
+    async function deleteUser(id) {
+        if(confirm("Delete this sub-admin?")) {
+            await fetch('/api/users', {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ id })
+            });
+            openAccSettings();
+        }
+    }
+
+    // GLOBAL SAVE
+    async function saveAll() {
+        const res = await fetch('/api/products', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify(siteData)
+        });
+        if(res.ok) alert("CHANGES PUBLISHED SUCCESSFULLY!");
+        else alert("Failed to publish changes.");
+    }
+
+    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+    load();
+</script>
+</body>
+</html>
